@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 
 
 export interface ChainConfig {
@@ -19,4 +20,22 @@ export interface MulticallConfig {
     retryDelay: number;
     gasPriceMultiplier: number;
     multicall3Address: string;
+}
+
+export interface BatchData {
+    recipient: string;
+    amount: string;
+    tokenAddress?: string;
+}
+
+
+export interface InvalidTransactions {
+    message: string;
+    batchData: BatchData;
+}
+
+export interface TransactionResponse {
+    txn: ethers.TransactionReceipt | null,
+    invalidTxns: InvalidTransactions[],
+    link: string
 }
