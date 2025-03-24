@@ -118,7 +118,7 @@ export class BatchService {
             const iface = new ethers.Interface(MULTICALL3_ABI);
             const calls = transactionData.to.map((target, i) => ({
                 target,
-                allowFailure: true,
+                allowFailure: false,
                 value: transactionData.values[i],
                 callData: transactionData.data[i],
             }));
@@ -228,9 +228,6 @@ export class BatchService {
 
         }
 
-        if (ethBatch.recipients.length === 0) {
-            throw new Error('No valid transactions to process');
-        }
         if (ethBatch.recipients.length === 0 && erc20Batch.recipients.length === 0) {
             throw new Error('No valid transactions to process');
         }
@@ -332,7 +329,7 @@ export class BatchService {
         // Build the calls with the correct structure.
         const calls = ethBatch.recipients.map((recipient, index) => ({
             target: recipient,
-            allowFailure: true,
+            allowFailure: false,
             value: BigInt(ethBatch.amounts[index]),
             callData: "0x",
         }));
