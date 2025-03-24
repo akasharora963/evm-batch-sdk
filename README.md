@@ -1,7 +1,7 @@
 # EVM BATCH SDK FOR ETH AND ERC20 
 
 ## Overview
-This SDK enables users to efficiently perform batch transactions on the Ethereum blockchain using a JSON-RPC provider. It leverages multicall configurations to optimize gas usage and execution speed.
+This SDK enables users to efficiently perform batch transactions on the Ethereum blockchain using a JSON-RPC and BROWSER provider. It leverages multicall configurations to optimize gas usage and execution speed.
 
 
 ### BATCH TRANSACTION FLOW DIAGRAM
