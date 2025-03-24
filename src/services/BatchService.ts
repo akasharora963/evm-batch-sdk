@@ -117,7 +117,7 @@ export class BatchService {
             const iface = new ethers.Interface(MULTICALL3_ABI);
             const calls = transactionData.to.map((target, i) => ({
                 target,
-                allowFailure: false,
+                allowFailure: true,
                 value: transactionData.values[i],
                 callData: transactionData.data[i],
             }));
@@ -211,8 +211,7 @@ export class BatchService {
         const gasLimit = await this.estimateGas(batchTxnParams, gasPrice);
 
         console.log("Gas Limit:", gasLimit);
-
-        return null
+        return await this.handleJsonRpcTransaction(batchTxnParams, gasLimit, gasPrice);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -320,6 +319,51 @@ export class BatchService {
         }
     }
 
+    /**
+     * Handle a JSON-RPC transaction.
+     *
+     * @param {BatchTransactionParams} batchTxnParams - The batch transaction parameters.
+     * @param {bigint} gasLimit - The gas limit for the transaction.
+         * @param {bigint | null} gasPrice - The gas price for the transaction.
+         * @returns {Promise<{
+         *     txn: ethers.TransactionReceipt | null;
+         *     invalidTxns: InvalidTransactions[];
+         *     link: string;
+         * }>} A promise that resolves to the transaction receipt, invalid transactions, and link.
+     */
+    private async handleJsonRpcTransaction(
+        batchTxnParams: BatchTransactionParams,
+        gasLimit: bigint,
+        gasPrice: bigint | null
+    ): Promise<{
+        txn: ethers.TransactionReceipt,
+        invalidTxns: InvalidTransactions[],
+        link: string
+    }> {
+        const signer = this.provider.getSigner();
+        if (!signer) {
+            throw new Error('Signer not available');
+        }
 
+        const txn = await signer.sendTransaction({
+            to: batchTxnParams.to[0],
+            data: batchTxnParams.data[0],
+            value: batchTxnParams.values[0],
+            gasLimit,
+            gasPrice
+        });
+
+        const receipt = await txn.wait();
+
+        if (!receipt) {
+            throw new Error("Transaction failed");
+        }
+
+        return {
+            txn: receipt,
+            invalidTxns: [],
+            link: `${this.config.blockExplorer}/tx/${txn.hash}`
+        };
+    }
 
 }
