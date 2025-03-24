@@ -158,7 +158,6 @@ export class BatchService {
             // Add a 20% buffer.
             return gasLimit + gasLimit / BigInt(5);
         } catch (error) {
-            console.error("Gas estimation failed:", error);
             return BigInt(DEFAULT_GAS_LIMIT);
         }
 
@@ -343,7 +342,6 @@ export class BatchService {
                 to: this.multicallConfig.multicall3Address,
             };
         } catch (error) {
-            console.error("Error in prepareETHBatch:", error);
             throw new Error("Failed to prepare ETH batch");
         }
     }
@@ -421,7 +419,6 @@ export class BatchService {
                 to: this.multicallConfig.multicall3Address,
             };
         } catch (error) {
-            console.error("Error in prepareERC20Batch:", error);
             throw new Error("Failed to prepare ERC20 batch");
         }
     }
