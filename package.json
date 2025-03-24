@@ -8,9 +8,9 @@
     "example:erc20": "ts-node src/example/erc20Example.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "prepare": "npm run build"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
@@ -26,5 +26,15 @@
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
     "typedoc": "^0.28.1"
-  }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "ethereum",
+    "batch",
+    "transactions",
+    "typescript",
+    "sdk"
+  ]
 }
