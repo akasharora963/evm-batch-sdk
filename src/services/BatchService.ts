@@ -3,7 +3,10 @@ import { MULTICALL3_ABI } from '../abi/Multicall3';
 import { ERC20_ABI } from '../abi/Erc20';
 import {
     BatchData,
+    BatchTransactionParams,
     ChainConfig,
+    ETHBatch,
+    InvalidTransactions,
     TransactionResponse
 } from '../types';
 import { DEFAULT_GAS_LIMIT } from '../config/chainConfig';
@@ -128,6 +131,36 @@ export class BatchService {
         batchData: BatchData[],
         gasPrice: bigint
     ): Promise<TransactionResponse | null> {
+        const ethBatch: ETHBatch = {
+            recipients: [],
+            amounts: []
+        };
+
+        const invalidTxns: InvalidTransactions[] = [];
+
+        // Validate and separate transactions
+        for (const batch of batchData) {
+            if (!ethers.isAddress(batch.recipient)) {
+                invalidTxns.push({
+                    message: `Invalid recipient address: ${batch.recipient}`,
+                    batchData: batch
+                });
+                continue;
+            }
+
+
+            ethBatch.recipients.push(batch.recipient);
+            ethBatch.amounts.push(BigInt(batch.amount));
+
+        }
+
+        if (ethBatch.recipients.length === 0) {
+            throw new Error('No valid transactions to process');
+        }
+
+        const batchTxnParams = await this.prepareBatchTransaction(ethBatch);
+        console.log("batchTxnParams", batchTxnParams);
+
         return null
     }
 
@@ -153,6 +186,89 @@ export class BatchService {
         }
         return this.erc20Contracts.get(tokenAddress)!;
     }
+
+    /**
+     * Prepares a batch transaction by encoding the aggregate3 function
+     * call with the given recipients and amounts. The encoded data is then
+     * returned along with the total value of the batch and the address of the
+     * Multicall3 contract.
+     *
+     * @param {ETHBatch} ethBatch - The ETH batch data.
+     * @returns {Promise<{
+     *     data: string[];
+     *     values: bigint[];
+     *     to: string[];
+     * }>} A promise that resolves to the prepared batch transaction data.
+     */
+    private async prepareBatchTransaction(
+        ethBatch: ETHBatch
+    ): Promise<{
+        data: string[];
+        values: bigint[];
+        to: string[];
+    }> {
+        const batchTxnParams: BatchTransactionParams = {
+            data: [],
+            values: [],
+            to: []
+        };
+
+        if (ethBatch.recipients.length > 0) {
+            const ethData = await this.prepareETHBatch(ethBatch);
+            batchTxnParams.data.push(ethData.data);
+            batchTxnParams.values.push(ethData.value);
+            batchTxnParams.to.push(ethData.to);
+        }
+
+        return batchTxnParams;
+    }
+
+    /**
+     * Prepares an ETH batch transaction by encoding the aggregate3 function
+     * call with the given recipients and amounts. The encoded data is then
+         * returned along with the total value of the batch and the address of the
+         * Multicall3 contract.
+         *
+         * @param {ETHBatch} ethBatch - The ETH batch data.
+         * @returns {Promise<{
+         *     data: string;
+         *     value: bigint;
+         *     to: string;
+         * }>} A promise that resolves to the prepared batch transaction data.
+         */
+    private async prepareETHBatch(ethBatch: ETHBatch): Promise<{
+        data: string;
+        value: bigint;
+        to: string;
+    }> {
+        // Build the calls with the correct structure.
+        const calls = ethBatch.recipients.map((recipient, index) => ({
+            target: recipient,
+            allowFailure: true,
+            value: BigInt(ethBatch.amounts[index]),
+            callData: "0x",
+        }));
+
+        console.log("Calls:", calls);
+
+        try {
+            // Use the full contract interface to encode the aggregate3 function call.
+            const iface = new ethers.Interface(MULTICALL3_ABI);
+
+            const encodedData = iface.encodeFunctionData("aggregate3Value", [calls]);
+            console.log("Encoded Data:", encodedData);
+
+            return {
+                data: encodedData || "0x",
+                value: ethBatch.amounts.reduce((acc, curr) => acc + BigInt(curr), BigInt(0)),
+                to: this.multicallConfig.multicall3Address,
+            };
+        } catch (error) {
+            console.error("Error in prepareETHBatch:", error);
+            throw new Error("Failed to prepare ETH batch");
+        }
+    }
+
 
 
 }
