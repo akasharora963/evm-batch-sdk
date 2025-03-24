@@ -1,5 +1,6 @@
-import { ethers, Transaction } from 'ethers';
+import { ethers } from 'ethers';
 import { MULTICALL3_ABI } from '../abi/Multicall3';
+import { ERC20_ABI } from '../abi/Erc20';
 import {
     BatchData,
     ChainConfig,
@@ -7,6 +8,7 @@ import {
 } from '../types';
 import { DEFAULT_GAS_LIMIT } from '../config/chainConfig';
 import { MulticallConfig, DEFAULT_MULTICALL_CONFIG, MULTICALL_CONFIGS } from '../config/multicallConfig';
+import { BaseProvider } from '../providers/BaseProvider';
 
 export class BatchService {
 
@@ -15,6 +17,7 @@ export class BatchService {
     private erc20Contracts: Map<string, ethers.Contract>;
     private config: ChainConfig;
     private multicallConfig: MulticallConfig;
+    private provider: BaseProvider;
 
     /**
      * Construct a new BatchService instance.
@@ -26,14 +29,16 @@ export class BatchService {
      */
     constructor(
         config: ChainConfig,
+        provider: BaseProvider,
         multicallConfig: MulticallConfig = MULTICALL_CONFIGS[config.id] || DEFAULT_MULTICALL_CONFIG
     ) {
         this.config = config;
+        this.provider = provider;
         this.multicallConfig = multicallConfig;
         this.multicallContract = new ethers.Contract(
             multicallConfig.multicall3Address,
             MULTICALL3_ABI,
-            new ethers.JsonRpcProvider(config.baseUrl)
+            provider.getSigner()
         );
         this.erc20Contracts = new Map();
     }
@@ -58,7 +63,10 @@ export class BatchService {
         spender: string,
         amount: bigint
     ): Promise<boolean> {
-        return true
+        const erc20Contract = await this.getERC20Contract(tokenAddress);
+        const currentAllowance = await erc20Contract.allowance(owner, spender);
+        console.log("currentAllowance", currentAllowance)
+        return BigInt(currentAllowance) > amount;
     }
 
     /**
@@ -76,7 +84,9 @@ export class BatchService {
         spender: string,
         amount: bigint
     ): Promise<void> {
-
+        const erc20Contract = await this.getERC20Contract(tokenAddress);
+        const approvalTxn = await erc20Contract.approve(spender, amount);
+        await approvalTxn.wait();
     }
 
     /**
@@ -120,5 +130,29 @@ export class BatchService {
     ): Promise<TransactionResponse | null> {
         return null
     }
+
+    /*//////////////////////////////////////////////////////////////
+                            PRIVATE METHODS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * Returns an instance of the ERC20 contract for the given `tokenAddress`.
+     * Caches the contract instance to avoid recreating it for every call.
+     *
+     * @param {string} tokenAddress The address of the ERC20 token.
+     * @returns {Promise<ethers.Contract>} A promise that resolves to the ERC20
+     *          contract instance.
+     */
+    private async getERC20Contract(tokenAddress: string): Promise<ethers.Contract> {
+        if (!this.erc20Contracts.has(tokenAddress)) {
+            this.erc20Contracts.set(tokenAddress, new ethers.Contract(
+                tokenAddress,
+                ERC20_ABI,
+                this.provider.getSigner()
+            ));
+        }
+        return this.erc20Contracts.get(tokenAddress)!;
+    }
+
 
 }
