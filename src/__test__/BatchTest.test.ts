@@ -27,8 +27,11 @@ const TESTNET_MULTICALL_CONFIG = {
     multicall3Address: '0xcA11bde05977b3631167028862bE2a173976CA11'
 };
 
-const TEST_WALLET = '0xF977814e90dA44bFA03b6295A0616a897446a4b3';
-const TEST_TOKEN = '0xDAC17F958D2ee523a2206206994597C13D831ec7';
+const TEST_WALLET = ethers.getAddress('0x3c5a809e712D30D932b71EdB066FA2EEDEE6Ad58');
+const TEST_RECIPIENT = ethers.getAddress('0xE24c9C12373741E9b6beed86D1A067fc5742dC07');
+const TEST_TOKEN = ethers.getAddress('0x5B2f5c3e8A9Aa9B26A2ADE212Fa6d0B2f6e993DC'); // token mock
+
+
 
 
 jest.mock('ethers', () => {
@@ -39,7 +42,11 @@ jest.mock('ethers', () => {
         ...originalModule,
         Contract: jest.fn().mockImplementation(() => ({
             connect: jest.fn().mockReturnThis(),
-            estimateGas: jest.fn().mockResolvedValue(ethers.toBigInt(21000))
+            estimateGas: jest.fn().mockResolvedValue(ethers.toBigInt(21000)),
+            sendTransaction: jest.fn().mockResolvedValue({
+                hash: '0xmockhash',
+                wait: jest.fn().mockResolvedValue({})
+            })
         })),
         AbiCoder: originalModule.AbiCoder
     };
@@ -56,7 +63,11 @@ describe('BatchService', () => {
         jest.clearAllMocks();
         mockEstimateGas = jest.fn().mockResolvedValue(BigInt(21000));
         mockGetSigner = jest.fn().mockReturnValue({
-            getAddress: jest.fn().mockResolvedValue(TEST_WALLET) // Mock signer address
+            getAddress: jest.fn().mockResolvedValue(TEST_WALLET), // Mock signer address
+            sendTransaction: jest.fn().mockResolvedValue({
+                hash: '0xmockhash',
+                wait: jest.fn().mockResolvedValue({})
+            })
         });
 
         provider = {
@@ -155,6 +166,44 @@ describe('BatchService', () => {
         });
     });
 
+    describe('processBatchTransactions', () => {
+        it('should process ETH batch transactions', async () => {
+            const batchData = [{
+                recipient: TEST_RECIPIENT,
+                amount: '100'
+            }];
 
+            const mockEstimateGas = jest.fn().mockResolvedValue(ethers.toBigInt(21000));
+            (provider.getProvider as jest.Mock).mockImplementation(() => ({
+                estimateGas: mockEstimateGas
+            }));
+
+            const result = await service.processBatchTransactions(batchData, ethers.toBigInt(30));
+
+            expect(result?.txn).toBeDefined();
+            expect(result?.invalidTxns).toHaveLength(0);
+            expect(result?.link).toContain('testnet.etherscan.io');
+        });
+
+        it('should process ERC20 batch transactions', async () => {
+            const batchData = [{
+                recipient: TEST_RECIPIENT,
+                tokenAddress: TEST_TOKEN,
+                amount: '100'
+            }];
+
+            const mockEstimateGas = jest.fn().mockResolvedValue(ethers.toBigInt(21000));
+            (provider.getProvider as jest.Mock).mockImplementation(() => ({
+                estimateGas: mockEstimateGas
+            }));
+
+            const result = await service.processBatchTransactions(batchData, ethers.toBigInt(30));
+
+            expect(result?.txn).toBeDefined();
+            expect(result?.invalidTxns).toHaveLength(0);
+            expect(result?.link).toContain('testnet.etherscan.io');
+        });
+
+    });
 
 });
