@@ -6,7 +6,7 @@
 
 # Interface: BatchTransactionParams
 
-Defined in: [types/index.ts:48](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L48)
+Defined in: [types/index.ts:48](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L48)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:48](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **data**: `string`[]
 
-Defined in: [types/index.ts:49](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L49)
+Defined in: [types/index.ts:49](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L49)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:49](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **to**: `string`[]
 
-Defined in: [types/index.ts:51](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L51)
+Defined in: [types/index.ts:51](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L51)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [types/index.ts:51](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **values**: `bigint`[]
 
-Defined in: [types/index.ts:50](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L50)
+Defined in: [types/index.ts:50](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L50)

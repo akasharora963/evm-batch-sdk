@@ -6,7 +6,7 @@
 
 # Class: BrowserProvider
 
-Defined in: [providers/BrowserProvider.ts:11](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/providers/BrowserProvider.ts#L11)
+Defined in: [providers/BrowserProvider.ts:11](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BrowserProvider.ts#L11)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [providers/BrowserProvider.ts:11](https://github.com/akasharora963/e
 
 > **new BrowserProvider**(`config`): `BrowserProvider`
 
-Defined in: [providers/BrowserProvider.ts:14](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/providers/BrowserProvider.ts#L14)
+Defined in: [providers/BrowserProvider.ts:14](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BrowserProvider.ts#L14)
 
 #### Parameters
 
@@ -40,7 +40,7 @@ Defined in: [providers/BrowserProvider.ts:14](https://github.com/akasharora963/e
 
 > `protected` **config**: [`ChainConfig`](../interfaces/ChainConfig.md)
 
-Defined in: [providers/BaseProvider.ts:5](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/providers/BaseProvider.ts#L5)
+Defined in: [providers/BaseProvider.ts:5](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BaseProvider.ts#L5)
 
 #### Inherited from
 
@@ -52,7 +52,7 @@ Defined in: [providers/BaseProvider.ts:5](https://github.com/akasharora963/evm-b
 
 > `protected` **provider**: `null` \| `Provider`
 
-Defined in: [providers/BaseProvider.ts:6](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/providers/BaseProvider.ts#L6)
+Defined in: [providers/BaseProvider.ts:6](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BaseProvider.ts#L6)
 
 #### Inherited from
 
@@ -64,7 +64,7 @@ Defined in: [providers/BaseProvider.ts:6](https://github.com/akasharora963/evm-b
 
 > `protected` **signer**: `null` \| `Signer`
 
-Defined in: [providers/BaseProvider.ts:7](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/providers/BaseProvider.ts#L7)
+Defined in: [providers/BaseProvider.ts:7](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BaseProvider.ts#L7)
 
 #### Inherited from
 
@@ -76,7 +76,7 @@ Defined in: [providers/BaseProvider.ts:7](https://github.com/akasharora963/evm-b
 
 > **connect**(): `Promise`\<`void`\>
 
-Defined in: [providers/BrowserProvider.ts:27](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/providers/BrowserProvider.ts#L27)
+Defined in: [providers/BrowserProvider.ts:27](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BrowserProvider.ts#L27)
 
 Connects the browser-based Ethereum provider by requesting account access.
 
@@ -102,7 +102,7 @@ Error - If no Ethereum provider is found in the browser or if the connection req
 
 > **getChainId**(): `number`
 
-Defined in: [providers/BrowserProvider.ts:74](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/providers/BrowserProvider.ts#L74)
+Defined in: [providers/BrowserProvider.ts:74](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BrowserProvider.ts#L74)
 
 Returns the chain ID for the target chain.
 
@@ -122,7 +122,7 @@ The chain ID.
 
 > **getProvider**(): `Provider`
 
-Defined in: [providers/BrowserProvider.ts:49](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/providers/BrowserProvider.ts#L49)
+Defined in: [providers/BrowserProvider.ts:49](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BrowserProvider.ts#L49)
 
 Gets the underlying provider for the BrowserProvider.
 
@@ -146,7 +146,7 @@ Error - If the provider is not initialized. Call `connect()` first.
 
 > **getSigner**(): `Signer`
 
-Defined in: [providers/BrowserProvider.ts:63](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/providers/BrowserProvider.ts#L63)
+Defined in: [providers/BrowserProvider.ts:63](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BrowserProvider.ts#L63)
 
 Returns the underlying wallet as a signer.
 

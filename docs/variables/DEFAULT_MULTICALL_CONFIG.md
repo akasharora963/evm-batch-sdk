@@ -8,4 +8,4 @@
 
 > `const` **DEFAULT\_MULTICALL\_CONFIG**: [`MulticallConfig`](../interfaces/MulticallConfig.md)
 
-Defined in: [config/multicallConfig.ts:65](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/config/multicallConfig.ts#L65)
+Defined in: [config/multicallConfig.ts:65](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/config/multicallConfig.ts#L65)

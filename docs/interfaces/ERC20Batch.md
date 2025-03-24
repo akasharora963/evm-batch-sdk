@@ -6,7 +6,7 @@
 
 # Interface: ERC20Batch
 
-Defined in: [types/index.ts:36](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L36)
+Defined in: [types/index.ts:36](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L36)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:36](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **amounts**: `bigint`[]
 
-Defined in: [types/index.ts:38](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L38)
+Defined in: [types/index.ts:38](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L38)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:38](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **recipients**: `string`[]
 
-Defined in: [types/index.ts:37](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L37)
+Defined in: [types/index.ts:37](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L37)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [types/index.ts:37](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **tokens**: `string`[]
 
-Defined in: [types/index.ts:39](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L39)
+Defined in: [types/index.ts:39](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L39)

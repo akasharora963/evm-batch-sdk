@@ -6,7 +6,7 @@
 
 # Interface: BatchData
 
-Defined in: [types/index.ts:25](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L25)
+Defined in: [types/index.ts:25](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L25)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:25](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **amount**: `string`
 
-Defined in: [types/index.ts:27](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L27)
+Defined in: [types/index.ts:27](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L27)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:27](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **recipient**: `string`
 
-Defined in: [types/index.ts:26](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L26)
+Defined in: [types/index.ts:26](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L26)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [types/index.ts:26](https://github.com/akasharora963/evm-batch-sdk/b
 
 > `optional` **tokenAddress**: `string`
 
-Defined in: [types/index.ts:28](https://github.com/akasharora963/evm-batch-sdk/blob/5b37c2ea625e7e8fce545be782ecdf3df051c29b/src/types/index.ts#L28)
+Defined in: [types/index.ts:28](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L28)
