@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "example": "ts-node src/example/baseExample.ts",
+    "example:eth": "ts-node src/example/ethExample.ts",
+    "example:erc20": "ts-node src/example/erc20Example.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
