@@ -28,10 +28,23 @@ export interface BatchData {
     tokenAddress?: string;
 }
 
+export interface ETHBatch {
+    recipients: string[];
+    amounts: bigint[];
+}
+
+
 
 export interface InvalidTransactions {
     message: string;
     batchData: BatchData;
+}
+
+
+export interface BatchTransactionParams {
+    data: string[];
+    values: bigint[];
+    to: string[];
 }
 
 export interface TransactionResponse {

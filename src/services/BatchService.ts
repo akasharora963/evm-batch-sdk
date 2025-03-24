@@ -3,7 +3,10 @@ import { MULTICALL3_ABI } from '../abi/Multicall3';
 import { ERC20_ABI } from '../abi/Erc20';
 import {
     BatchData,
+    BatchTransactionParams,
     ChainConfig,
+    ETHBatch,
+    InvalidTransactions,
     TransactionResponse
 } from '../types';
 import { DEFAULT_GAS_LIMIT } from '../config/chainConfig';
@@ -100,15 +103,63 @@ export class BatchService {
      * @returns {Promise<bigint>} A promise that resolves to the estimated gas limit for the transactions.
      */
     async estimateGas(
-        transactionData: {
-            data: string[];
-            values: bigint[];
-            to: string[];
-        },
+        transactionData: BatchTransactionParams,
         gasPrice: bigint
     ): Promise<bigint> {
 
-        return BigInt(DEFAULT_GAS_LIMIT)
+        try {
+
+            const finalGasPrice = gasPrice;
+
+            console.log("Final Gas Price:", finalGasPrice);
+
+            // Use the full contract interface to encode the function call for aggregate3.
+            const iface = new ethers.Interface(MULTICALL3_ABI);
+            const calls = transactionData.to.map((target, i) => ({
+                target,
+                allowFailure: true,
+                value: transactionData.values[i],
+                callData: transactionData.data[i],
+            }));
+            const encodedData = iface.encodeFunctionData("aggregate3Value", [calls]);
+
+            console.log("Encoded Data:", encodedData);
+            console.log("Multicall Address:", this.config.multicallAddress);
+
+            // Get signer and sender address.
+            const signer = this.provider.getSigner();
+            if (!signer) {
+                throw new Error("Signer not found. Ensure provider is properly initialized.");
+            }
+            const senderAddress = await signer.getAddress();
+            if (!senderAddress) {
+                throw new Error("Failed to retrieve sender address.");
+            }
+
+            // Calculate total ETH value to send
+            const totalValue = transactionData.values.reduce((acc, val) => acc + val, BigInt(0));
+            console.log("Total ETH value to send:", totalValue.toString());
+
+            // Estimate gas using the underlying JSON-RPC provider.
+            const gasLimit = await this.provider.getProvider().estimateGas({
+                from: senderAddress,
+                to: this.config.multicallAddress,
+                data: encodedData,
+                gasPrice: finalGasPrice,
+                value: totalValue
+            });
+
+            if (!gasLimit) {
+                console.warn("Gas estimation returned null or undefined, using default gas limit.");
+                return BigInt(DEFAULT_GAS_LIMIT);
+            }
+
+            // Add a 20% buffer.
+            return gasLimit + gasLimit / BigInt(5);
+        } catch (error) {
+            console.error("Gas estimation failed:", error);
+            return BigInt(DEFAULT_GAS_LIMIT);
+        }
 
     }
 
@@ -128,7 +179,39 @@ export class BatchService {
         batchData: BatchData[],
         gasPrice: bigint
     ): Promise<TransactionResponse | null> {
-        return null
+        const ethBatch: ETHBatch = {
+            recipients: [],
+            amounts: []
+        };
+
+        const invalidTxns: InvalidTransactions[] = [];
+
+        // Validate and separate transactions
+        for (const batch of batchData) {
+            if (!ethers.isAddress(batch.recipient)) {
+                invalidTxns.push({
+                    message: `Invalid recipient address: ${batch.recipient}`,
+                    batchData: batch
+                });
+                continue;
+            }
+
+
+            ethBatch.recipients.push(batch.recipient);
+            ethBatch.amounts.push(BigInt(batch.amount));
+
+        }
+
+        if (ethBatch.recipients.length === 0) {
+            throw new Error('No valid transactions to process');
+        }
+
+        const batchTxnParams = await this.prepareBatchTransaction(ethBatch);
+        console.log("batchTxnParams", batchTxnParams);
+        const gasLimit = await this.estimateGas(batchTxnParams, gasPrice);
+
+        console.log("Gas Limit:", gasLimit);
+        return await this.handleJsonRpcTransaction(batchTxnParams, gasLimit, gasPrice);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -154,5 +237,133 @@ export class BatchService {
         return this.erc20Contracts.get(tokenAddress)!;
     }
 
+    /**
+     * Prepares a batch transaction by encoding the aggregate3 function
+     * call with the given recipients and amounts. The encoded data is then
+     * returned along with the total value of the batch and the address of the
+     * Multicall3 contract.
+     *
+     * @param {ETHBatch} ethBatch - The ETH batch data.
+     * @returns {Promise<{
+     *     data: string[];
+     *     values: bigint[];
+     *     to: string[];
+     * }>} A promise that resolves to the prepared batch transaction data.
+     */
+    private async prepareBatchTransaction(
+        ethBatch: ETHBatch
+    ): Promise<{
+        data: string[];
+        values: bigint[];
+        to: string[];
+    }> {
+        const batchTxnParams: BatchTransactionParams = {
+            data: [],
+            values: [],
+            to: []
+        };
+
+        if (ethBatch.recipients.length > 0) {
+            const ethData = await this.prepareETHBatch(ethBatch);
+            batchTxnParams.data.push(ethData.data);
+            batchTxnParams.values.push(ethData.value);
+            batchTxnParams.to.push(ethData.to);
+        }
+
+        return batchTxnParams;
+    }
+
+    /**
+     * Prepares an ETH batch transaction by encoding the aggregate3 function
+     * call with the given recipients and amounts. The encoded data is then
+         * returned along with the total value of the batch and the address of the
+         * Multicall3 contract.
+         *
+         * @param {ETHBatch} ethBatch - The ETH batch data.
+         * @returns {Promise<{
+         *     data: string;
+         *     value: bigint;
+         *     to: string;
+         * }>} A promise that resolves to the prepared batch transaction data.
+         */
+    private async prepareETHBatch(ethBatch: ETHBatch): Promise<{
+        data: string;
+        value: bigint;
+        to: string;
+    }> {
+        // Build the calls with the correct structure.
+        const calls = ethBatch.recipients.map((recipient, index) => ({
+            target: recipient,
+            allowFailure: true,
+            value: BigInt(ethBatch.amounts[index]),
+            callData: "0x",
+        }));
+
+        console.log("Calls:", calls);
+
+        try {
+            // Use the full contract interface to encode the aggregate3 function call.
+            const iface = new ethers.Interface(MULTICALL3_ABI);
+
+            const encodedData = iface.encodeFunctionData("aggregate3Value", [calls]);
+            console.log("Encoded Data:", encodedData);
+
+            return {
+                data: encodedData || "0x",
+                value: ethBatch.amounts.reduce((acc, curr) => acc + BigInt(curr), BigInt(0)),
+                to: this.multicallConfig.multicall3Address,
+            };
+        } catch (error) {
+            console.error("Error in prepareETHBatch:", error);
+            throw new Error("Failed to prepare ETH batch");
+        }
+    }
+
+    /**
+     * Handle a JSON-RPC transaction.
+     *
+     * @param {BatchTransactionParams} batchTxnParams - The batch transaction parameters.
+     * @param {bigint} gasLimit - The gas limit for the transaction.
+         * @param {bigint | null} gasPrice - The gas price for the transaction.
+         * @returns {Promise<{
+         *     txn: ethers.TransactionReceipt | null;
+         *     invalidTxns: InvalidTransactions[];
+         *     link: string;
+         * }>} A promise that resolves to the transaction receipt, invalid transactions, and link.
+     */
+    private async handleJsonRpcTransaction(
+        batchTxnParams: BatchTransactionParams,
+        gasLimit: bigint,
+        gasPrice: bigint | null
+    ): Promise<{
+        txn: ethers.TransactionReceipt,
+        invalidTxns: InvalidTransactions[],
+        link: string
+    }> {
+        const signer = this.provider.getSigner();
+        if (!signer) {
+            throw new Error('Signer not available');
+        }
+
+        const txn = await signer.sendTransaction({
+            to: batchTxnParams.to[0],
+            data: batchTxnParams.data[0],
+            value: batchTxnParams.values[0],
+            gasLimit,
+            gasPrice
+        });
+
+        const receipt = await txn.wait();
+
+        if (!receipt) {
+            throw new Error("Transaction failed");
+        }
+
+        return {
+            txn: receipt,
+            invalidTxns: [],
+            link: `${this.config.blockExplorer}/tx/${txn.hash}`
+        };
+    }
 
 }
