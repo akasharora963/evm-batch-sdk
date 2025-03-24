@@ -13,6 +13,7 @@ import {
 import { DEFAULT_GAS_LIMIT } from '../config/chainConfig';
 import { MulticallConfig, DEFAULT_MULTICALL_CONFIG, MULTICALL_CONFIGS } from '../config/multicallConfig';
 import { BaseProvider } from '../providers/BaseProvider';
+import { GasPriceUtils } from '../utils/gasPrice';
 
 export class BatchService {
 
@@ -109,8 +110,13 @@ export class BatchService {
     ): Promise<bigint> {
 
         try {
-
-            const finalGasPrice = gasPrice;
+            const multicallConfig = MULTICALL_CONFIGS[this.config.id] || DEFAULT_MULTICALL_CONFIG;
+            const optimalGasPrice = await GasPriceUtils.getOptimalGasPrice(
+                this.provider.getProvider(),
+                this.config,
+                multicallConfig
+            );
+            const finalGasPrice = gasPrice > optimalGasPrice ? gasPrice : optimalGasPrice;
 
             console.log("Final Gas Price:", finalGasPrice);
 
