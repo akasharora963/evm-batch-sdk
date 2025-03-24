@@ -103,15 +103,63 @@ export class BatchService {
      * @returns {Promise<bigint>} A promise that resolves to the estimated gas limit for the transactions.
      */
     async estimateGas(
-        transactionData: {
-            data: string[];
-            values: bigint[];
-            to: string[];
-        },
+        transactionData: BatchTransactionParams,
         gasPrice: bigint
     ): Promise<bigint> {
 
-        return BigInt(DEFAULT_GAS_LIMIT)
+        try {
+
+            const finalGasPrice = gasPrice;
+
+            console.log("Final Gas Price:", finalGasPrice);
+
+            // Use the full contract interface to encode the function call for aggregate3.
+            const iface = new ethers.Interface(MULTICALL3_ABI);
+            const calls = transactionData.to.map((target, i) => ({
+                target,
+                allowFailure: false,
+                value: transactionData.values[i],
+                callData: transactionData.data[i],
+            }));
+            const encodedData = iface.encodeFunctionData("aggregate3Value", [calls]);
+
+            console.log("Encoded Data:", encodedData);
+            console.log("Multicall Address:", this.config.multicallAddress);
+
+            // Get signer and sender address.
+            const signer = this.provider.getSigner();
+            if (!signer) {
+                throw new Error("Signer not found. Ensure provider is properly initialized.");
+            }
+            const senderAddress = await signer.getAddress();
+            if (!senderAddress) {
+                throw new Error("Failed to retrieve sender address.");
+            }
+
+            // Calculate total ETH value to send
+            const totalValue = transactionData.values.reduce((acc, val) => acc + val, BigInt(0));
+            console.log("Total ETH value to send:", totalValue.toString());
+
+            // Estimate gas using the underlying JSON-RPC provider.
+            const gasLimit = await this.provider.getProvider().estimateGas({
+                from: senderAddress,
+                to: this.config.multicallAddress,
+                data: encodedData,
+                gasPrice: finalGasPrice,
+                value: totalValue
+            });
+
+            if (!gasLimit) {
+                console.warn("Gas estimation returned null or undefined, using default gas limit.");
+                return BigInt(DEFAULT_GAS_LIMIT);
+            }
+
+            // Add a 20% buffer.
+            return gasLimit + gasLimit / BigInt(5);
+        } catch (error) {
+            console.error("Gas estimation failed:", error);
+            return BigInt(DEFAULT_GAS_LIMIT);
+        }
 
     }
 
@@ -160,6 +208,9 @@ export class BatchService {
 
         const batchTxnParams = await this.prepareBatchTransaction(ethBatch);
         console.log("batchTxnParams", batchTxnParams);
+        const gasLimit = await this.estimateGas(batchTxnParams, gasPrice);
+
+        console.log("Gas Limit:", gasLimit);
 
         return null
     }
