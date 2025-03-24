@@ -33,7 +33,11 @@ export interface ETHBatch {
     amounts: bigint[];
 }
 
-
+export interface ERC20Batch {
+    recipients: string[];
+    amounts: bigint[];
+    tokens: string[];
+}
 
 export interface InvalidTransactions {
     message: string;

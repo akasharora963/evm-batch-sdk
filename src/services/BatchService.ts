@@ -5,6 +5,7 @@ import {
     BatchData,
     BatchTransactionParams,
     ChainConfig,
+    ERC20Batch,
     ETHBatch,
     InvalidTransactions,
     TransactionResponse
@@ -184,6 +185,13 @@ export class BatchService {
             amounts: []
         };
 
+        const erc20Batch: ERC20Batch = {
+            recipients: [],
+            amounts: [],
+            tokens: []
+        };
+
+
         const invalidTxns: InvalidTransactions[] = [];
 
         // Validate and separate transactions
@@ -196,17 +204,38 @@ export class BatchService {
                 continue;
             }
 
+            if (batch.tokenAddress) {
+                if (!ethers.isAddress(batch.tokenAddress)) {
+                    invalidTxns.push({
+                        message: `Invalid token address: ${batch.tokenAddress}`,
+                        batchData: batch
+                    });
+                    continue;
+                }
 
-            ethBatch.recipients.push(batch.recipient);
-            ethBatch.amounts.push(BigInt(batch.amount));
+                const owner = await this.provider.getSigner()?.getAddress();
+                if (!owner) {
+                    throw new Error('Signer not available');
+                }
+
+                erc20Batch.recipients.push(batch.recipient);
+                erc20Batch.amounts.push(BigInt(batch.amount));
+                erc20Batch.tokens.push(batch.tokenAddress);
+            } else {
+                ethBatch.recipients.push(batch.recipient);
+                ethBatch.amounts.push(BigInt(batch.amount));
+            }
 
         }
 
         if (ethBatch.recipients.length === 0) {
             throw new Error('No valid transactions to process');
         }
+        if (ethBatch.recipients.length === 0 && erc20Batch.recipients.length === 0) {
+            throw new Error('No valid transactions to process');
+        }
 
-        const batchTxnParams = await this.prepareBatchTransaction(ethBatch);
+        const batchTxnParams = await this.prepareBatchTransaction(ethBatch, erc20Batch);
         console.log("batchTxnParams", batchTxnParams);
         const gasLimit = await this.estimateGas(batchTxnParams, gasPrice);
 
@@ -237,13 +266,14 @@ export class BatchService {
         return this.erc20Contracts.get(tokenAddress)!;
     }
 
+
     /**
-     * Prepares a batch transaction by encoding the aggregate3 function
-     * call with the given recipients and amounts. The encoded data is then
-     * returned along with the total value of the batch and the address of the
-     * Multicall3 contract.
+     * Prepares a batch transaction by encoding the `aggregate3Value` function call for
+     * both ETH and ERC20 transactions. The encoded data is then returned along with the
+     * total value of the batch and the address of the Multicall3 contract.
      *
      * @param {ETHBatch} ethBatch - The ETH batch data.
+     * @param {ERC20Batch} erc20Batch - The ERC20 batch data.
      * @returns {Promise<{
      *     data: string[];
      *     values: bigint[];
@@ -251,7 +281,8 @@ export class BatchService {
      * }>} A promise that resolves to the prepared batch transaction data.
      */
     private async prepareBatchTransaction(
-        ethBatch: ETHBatch
+        ethBatch: ETHBatch,
+        erc20Batch: ERC20Batch
     ): Promise<{
         data: string[];
         values: bigint[];
@@ -268,6 +299,13 @@ export class BatchService {
             batchTxnParams.data.push(ethData.data);
             batchTxnParams.values.push(ethData.value);
             batchTxnParams.to.push(ethData.to);
+        }
+
+        if (erc20Batch.recipients.length > 0) {
+            const erc20Data = await this.prepareERC20Batch(erc20Batch);
+            batchTxnParams.data.push(erc20Data.data);
+            batchTxnParams.values.push(erc20Data.value);
+            batchTxnParams.to.push(erc20Data.to);
         }
 
         return batchTxnParams;
@@ -318,6 +356,88 @@ export class BatchService {
             throw new Error("Failed to prepare ETH batch");
         }
     }
+
+    /**
+         * Prepares an ERC20 batch transaction by encoding the "transfer" function
+         * call for each token and recipient, and then encoding the
+         * `aggregate3Value` function call for the Multicall3 contract.
+         * The encoded data is then returned along with the total value of the
+         * batch and the address of the Multicall3 contract.
+         *
+         * @param {ERC20Batch} erc20Batch - The ERC20 batch data.
+         * @returns {Promise<{
+         *     data: string;
+         *     value: bigint;
+         *     to: string;
+         * }>} A promise that resolves to the prepared batch transaction data.
+    */
+    private async prepareERC20Batch(erc20Batch: ERC20Batch): Promise<{
+        data: string;
+        value: bigint;
+        to: string;
+    }> {
+        try {
+
+            const signer = this.provider.getSigner();
+            if (!signer) {
+                throw new Error("Signer not found. Ensure provider is properly initialized.");
+            }
+            const senderAddress = await signer.getAddress();
+            if (!senderAddress) {
+                throw new Error("Failed to retrieve sender address.");
+            }
+
+            // Approve Multicall3 to transfer tokens on behalf of sender
+            for (const token of erc20Batch.tokens) {
+                const erc20Contract = await this.getERC20Contract(token);
+
+                const allowance = await erc20Contract.allowance(senderAddress, this.multicallConfig.multicall3Address);
+                const totalAmount = erc20Batch.amounts.reduce((acc, amount) => acc + BigInt(amount), BigInt(0));
+
+                if (allowance < totalAmount) {
+                    const approveTx = await erc20Contract.approve(this.multicallConfig.multicall3Address, totalAmount);
+                    await approveTx.wait();
+                }
+            }
+
+            // Build the calls with the correct structure for ERC20 transfers.
+            // Each call will encode the "transfer" function call for the token.
+            const calls = erc20Batch.tokens.map((token, index) => {
+                // Create an interface for the ERC20 token.
+                const erc20Interface = new ethers.Interface(ERC20_ABI);
+                // Encode the transfer function call.
+                const encodedCallData = erc20Interface.encodeFunctionData("transferFrom", [
+                    senderAddress,
+                    erc20Batch.recipients[index],
+                    erc20Batch.amounts[index]
+                ]);
+
+                return {
+                    target: token,
+                    allowFailure: false,
+                    value: BigInt(0), // No ETH is sent with ERC20 transfers.
+                    callData: encodedCallData,
+                };
+            });
+
+            console.log("ERC20 Calls:", calls);
+
+            // Use the full multicall interface to encode the aggregate3Value function call.
+            const iface = new ethers.Interface(MULTICALL3_ABI);
+            const encodedData = iface.encodeFunctionData("aggregate3Value", [calls]);
+            console.log("Encoded ERC20 Data:", encodedData);
+
+            return {
+                data: encodedData || "0x",
+                value: BigInt(0),
+                to: this.multicallConfig.multicall3Address,
+            };
+        } catch (error) {
+            console.error("Error in prepareERC20Batch:", error);
+            throw new Error("Failed to prepare ERC20 batch");
+        }
+    }
+
 
     /**
      * Handle a JSON-RPC transaction.
