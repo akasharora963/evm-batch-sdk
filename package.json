@@ -1,19 +1,21 @@
 {
   "name": "evm-batch-sdk",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "example:eth": "ts-node src/example/ethExample.ts",
     "example:erc20": "ts-node src/example/erc20Example.ts",
+    "docs": "typedoc",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "prepare": "npm run build"
   },
-  "author": "",
+  "author": "akasharora963",
   "license": "ISC",
-  "description": "",
+  "description": "SDK for sending multiple transactions of ETH and ERC20 token transfers in a single batch transaction usinf multicall",
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.11",
