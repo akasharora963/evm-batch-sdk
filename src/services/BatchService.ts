@@ -8,10 +8,11 @@ import {
     ERC20Batch,
     ETHBatch,
     InvalidTransactions,
-    TransactionResponse
+    TransactionResponse,
+    MulticallConfig
 } from '../types';
 import { DEFAULT_GAS_LIMIT } from '../config/chainConfig';
-import { MulticallConfig, DEFAULT_MULTICALL_CONFIG, MULTICALL_CONFIGS } from '../config/multicallConfig';
+import { DEFAULT_MULTICALL_CONFIG, MULTICALL_CONFIGS } from '../config/multicallConfig';
 import { BaseProvider } from '../providers/BaseProvider';
 import { GasPriceUtils } from '../utils/gasPrice';
 
@@ -70,7 +71,6 @@ export class BatchService {
     ): Promise<boolean> {
         const erc20Contract = await this.getERC20Contract(tokenAddress);
         const currentAllowance = await erc20Contract.allowance(owner, spender);
-        console.log("currentAllowance", currentAllowance)
         return BigInt(currentAllowance) > amount;
     }
 
@@ -118,8 +118,6 @@ export class BatchService {
             );
             const finalGasPrice = gasPrice > optimalGasPrice ? gasPrice : optimalGasPrice;
 
-            console.log("Final Gas Price:", finalGasPrice);
-
             // Use the full contract interface to encode the function call for aggregate3.
             const iface = new ethers.Interface(MULTICALL3_ABI);
             const calls = transactionData.to.map((target, i) => ({
@@ -129,9 +127,6 @@ export class BatchService {
                 callData: transactionData.data[i],
             }));
             const encodedData = iface.encodeFunctionData("aggregate3Value", [calls]);
-
-            console.log("Encoded Data:", encodedData);
-            console.log("Multicall Address:", this.config.multicallAddress);
 
             // Get signer and sender address.
             const signer = this.provider.getSigner();
@@ -145,9 +140,8 @@ export class BatchService {
 
             // Calculate total ETH value to send
             const totalValue = transactionData.values.reduce((acc, val) => acc + val, BigInt(0));
-            console.log("Total ETH value to send:", totalValue.toString());
 
-            // Estimate gas using the underlying JSON-RPC provider.
+            // Estimate gas using the underlying RPC provider.
             const gasLimit = await this.provider.getProvider().estimateGas({
                 from: senderAddress,
                 to: this.config.multicallAddress,
@@ -239,11 +233,9 @@ export class BatchService {
         }
 
         const batchTxnParams = await this.prepareBatchTransaction(ethBatch, erc20Batch);
-        console.log("batchTxnParams", batchTxnParams);
         const gasLimit = await this.estimateGas(batchTxnParams, gasPrice);
 
-        console.log("Gas Limit:", gasLimit);
-        return await this.handleJsonRpcTransaction(batchTxnParams, gasLimit, gasPrice);
+        return await this.handleSendTransaction(batchTxnParams, gasLimit, gasPrice);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -340,14 +332,10 @@ export class BatchService {
             callData: "0x",
         }));
 
-        console.log("Calls:", calls);
-
         try {
-            // Use the full contract interface to encode the aggregate3 function call.
             const iface = new ethers.Interface(MULTICALL3_ABI);
 
             const encodedData = iface.encodeFunctionData("aggregate3Value", [calls]);
-            console.log("Encoded Data:", encodedData);
 
             return {
                 data: encodedData || "0x",
@@ -423,12 +411,9 @@ export class BatchService {
                 };
             });
 
-            console.log("ERC20 Calls:", calls);
 
-            // Use the full multicall interface to encode the aggregate3Value function call.
             const iface = new ethers.Interface(MULTICALL3_ABI);
             const encodedData = iface.encodeFunctionData("aggregate3Value", [calls]);
-            console.log("Encoded ERC20 Data:", encodedData);
 
             return {
                 data: encodedData || "0x",
@@ -443,7 +428,7 @@ export class BatchService {
 
 
     /**
-     * Handle a JSON-RPC transaction.
+     * Handle a batch transaction by sending a RPC transaction.
      *
      * @param {BatchTransactionParams} batchTxnParams - The batch transaction parameters.
      * @param {bigint} gasLimit - The gas limit for the transaction.
@@ -454,7 +439,7 @@ export class BatchService {
          *     link: string;
          * }>} A promise that resolves to the transaction receipt, invalid transactions, and link.
      */
-    private async handleJsonRpcTransaction(
+    private async handleSendTransaction(
         batchTxnParams: BatchTransactionParams,
         gasLimit: bigint,
         gasPrice: bigint | null
