@@ -241,9 +241,9 @@ export class BatchService {
         const batchTxnParams = await this.prepareBatchTransaction(ethBatch, erc20Batch);
         console.log("batchTxnParams", batchTxnParams);
         const gasLimit = await this.estimateGas(batchTxnParams, gasPrice);
-
         console.log("Gas Limit:", gasLimit);
-        return await this.handleJsonRpcTransaction(batchTxnParams, gasLimit, gasPrice);
+
+        return await this.handleSendTransaction(batchTxnParams, gasLimit, gasPrice);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -443,7 +443,7 @@ export class BatchService {
 
 
     /**
-     * Handle a JSON-RPC transaction.
+     * Handle a batch transaction by sending a RPC transaction.
      *
      * @param {BatchTransactionParams} batchTxnParams - The batch transaction parameters.
      * @param {bigint} gasLimit - The gas limit for the transaction.
@@ -454,7 +454,7 @@ export class BatchService {
          *     link: string;
          * }>} A promise that resolves to the transaction receipt, invalid transactions, and link.
      */
-    private async handleJsonRpcTransaction(
+    private async handleSendTransaction(
         batchTxnParams: BatchTransactionParams,
         gasLimit: bigint,
         gasPrice: bigint | null
