@@ -1,6 +1,5 @@
 import { ethers } from 'ethers';
-import { ChainConfig } from '../types';
-import { MulticallConfig } from '../config/multicallConfig';
+import { ChainConfig, MulticallConfig } from '../types';
 
 export class GasPriceUtils {
     /**

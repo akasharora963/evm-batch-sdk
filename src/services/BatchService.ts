@@ -8,10 +8,11 @@ import {
     ERC20Batch,
     ETHBatch,
     InvalidTransactions,
-    TransactionResponse
+    TransactionResponse,
+    MulticallConfig
 } from '../types';
 import { DEFAULT_GAS_LIMIT } from '../config/chainConfig';
-import { MulticallConfig, DEFAULT_MULTICALL_CONFIG, MULTICALL_CONFIGS } from '../config/multicallConfig';
+import { DEFAULT_MULTICALL_CONFIG, MULTICALL_CONFIGS } from '../config/multicallConfig';
 import { BaseProvider } from '../providers/BaseProvider';
 import { GasPriceUtils } from '../utils/gasPrice';
 
