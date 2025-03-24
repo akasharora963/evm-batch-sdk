@@ -7,6 +7,7 @@ import {
 } from '../types';
 import { DEFAULT_GAS_LIMIT } from '../config/chainConfig';
 import { MulticallConfig, DEFAULT_MULTICALL_CONFIG, MULTICALL_CONFIGS } from '../config/multicallConfig';
+import { BaseProvider } from '../providers/BaseProvider';
 
 export class BatchService {
 
@@ -15,6 +16,7 @@ export class BatchService {
     private erc20Contracts: Map<string, ethers.Contract>;
     private config: ChainConfig;
     private multicallConfig: MulticallConfig;
+    private provider: BaseProvider;
 
     /**
      * Construct a new BatchService instance.
@@ -26,14 +28,16 @@ export class BatchService {
      */
     constructor(
         config: ChainConfig,
+        provider: BaseProvider,
         multicallConfig: MulticallConfig = MULTICALL_CONFIGS[config.id] || DEFAULT_MULTICALL_CONFIG
     ) {
         this.config = config;
+        this.provider = provider;
         this.multicallConfig = multicallConfig;
         this.multicallContract = new ethers.Contract(
             multicallConfig.multicall3Address,
             MULTICALL3_ABI,
-            new ethers.JsonRpcProvider(config.baseUrl)
+            provider.getSigner()
         );
         this.erc20Contracts = new Map();
     }
