@@ -27,7 +27,7 @@ Before using this SDK, ensure you have the following:
 ## Installation
 Install the required dependencies using your package manager:
 ```sh
-npm install
+npm i evm-batch-sdk
 ```
 
 ## Environment Setup (in case of JsonRpcProvider)
