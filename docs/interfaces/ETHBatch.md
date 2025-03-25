@@ -6,7 +6,7 @@
 
 # Interface: ETHBatch
 
-Defined in: [types/index.ts:31](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L31)
+Defined in: [types/index.ts:31](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L31)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:31](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **amounts**: `bigint`[]
 
-Defined in: [types/index.ts:33](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L33)
+Defined in: [types/index.ts:33](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L33)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [types/index.ts:33](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **recipients**: `string`[]
 
-Defined in: [types/index.ts:32](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L32)
+Defined in: [types/index.ts:32](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L32)

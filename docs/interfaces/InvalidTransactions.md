@@ -6,7 +6,7 @@
 
 # Interface: InvalidTransactions
 
-Defined in: [types/index.ts:42](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L42)
+Defined in: [types/index.ts:42](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L42)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:42](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **batchData**: [`BatchData`](BatchData.md)
 
-Defined in: [types/index.ts:44](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L44)
+Defined in: [types/index.ts:44](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L44)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [types/index.ts:44](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **message**: `string`
 
-Defined in: [types/index.ts:43](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L43)
+Defined in: [types/index.ts:43](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L43)
