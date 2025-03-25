@@ -6,7 +6,7 @@
 
 # Interface: MulticallConfig
 
-Defined in: [types/index.ts:17](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L17)
+Defined in: [types/index.ts:17](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L17)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:17](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **gasPriceMultiplier**: `number`
 
-Defined in: [types/index.ts:21](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L21)
+Defined in: [types/index.ts:21](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L21)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:21](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **maxCalls**: `number`
 
-Defined in: [types/index.ts:18](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L18)
+Defined in: [types/index.ts:18](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L18)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types/index.ts:18](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **multicall3Address**: `string`
 
-Defined in: [types/index.ts:22](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L22)
+Defined in: [types/index.ts:22](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L22)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [types/index.ts:22](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **retryCount**: `number`
 
-Defined in: [types/index.ts:19](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L19)
+Defined in: [types/index.ts:19](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L19)
 
 ***
 
@@ -46,4 +46,4 @@ Defined in: [types/index.ts:19](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **retryDelay**: `number`
 
-Defined in: [types/index.ts:20](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L20)
+Defined in: [types/index.ts:20](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L20)

@@ -101,11 +101,13 @@ export class BatchService {
      * @param {string[]} transactionData.data - Array of data payloads for the transactions.
      * @param {bigint[]} transactionData.values - Array of values to transfer in the transactions.
      * @param {string[]} transactionData.to - Array of destination addresses for the transactions.
+     * @param {boolean} allowFailure - Whether to allow failures in the transactions.
      * @param {bigint} gasPrice - The gas price to use for the estimation.
      * @returns {Promise<bigint>} A promise that resolves to the estimated gas limit for the transactions.
      */
     async estimateGas(
         transactionData: BatchTransactionParams,
+        allowFailure: boolean,
         gasPrice: bigint
     ): Promise<bigint> {
 
@@ -122,7 +124,7 @@ export class BatchService {
             const iface = new ethers.Interface(MULTICALL3_ABI);
             const calls = transactionData.to.map((target, i) => ({
                 target,
-                allowFailure: false,
+                allowFailure: allowFailure,
                 value: transactionData.values[i],
                 callData: transactionData.data[i],
             }));
@@ -171,12 +173,14 @@ export class BatchService {
      * a link to the Etherscan page for the transaction.
      *
      * @param {BatchData[]} batchData - Array of batch data objects.
+     * @param {boolean} allowFailure - Whether to allow the transaction to fail.
      * @param {bigint} gasPrice - The gas price to use for the transaction.
      * @returns {Promise<TransactionResponse | null>} A promise that resolves to
      *          the transaction response or null if the transaction failed.
      */
     async processBatchTransactions(
         batchData: BatchData[],
+        allowFailure: boolean,
         gasPrice: bigint
     ): Promise<TransactionResponse | null> {
         const ethBatch: ETHBatch = {
@@ -231,8 +235,8 @@ export class BatchService {
             throw new Error('No valid transactions to process');
         }
 
-        const batchTxnParams = await this.prepareBatchTransaction(ethBatch, erc20Batch);
-        const gasLimit = await this.estimateGas(batchTxnParams, gasPrice);
+        const batchTxnParams = await this.prepareBatchTransaction(ethBatch, erc20Batch, allowFailure);
+        const gasLimit = await this.estimateGas(batchTxnParams, allowFailure, gasPrice);
 
         return await this.handleSendTransaction(batchTxnParams, gasLimit, gasPrice);
     }
@@ -268,6 +272,7 @@ export class BatchService {
      *
      * @param {ETHBatch} ethBatch - The ETH batch data.
      * @param {ERC20Batch} erc20Batch - The ERC20 batch data.
+     * @param {boolean} allowFailure - Whether to allow the transaction to fail.
      * @returns {Promise<{
      *     data: string[];
      *     values: bigint[];
@@ -276,7 +281,8 @@ export class BatchService {
      */
     private async prepareBatchTransaction(
         ethBatch: ETHBatch,
-        erc20Batch: ERC20Batch
+        erc20Batch: ERC20Batch,
+        allowFailure: boolean
     ): Promise<{
         data: string[];
         values: bigint[];
@@ -289,14 +295,14 @@ export class BatchService {
         };
 
         if (ethBatch.recipients.length > 0) {
-            const ethData = await this.prepareETHBatch(ethBatch);
+            const ethData = await this.prepareETHBatch(ethBatch, allowFailure);
             batchTxnParams.data.push(ethData.data);
             batchTxnParams.values.push(ethData.value);
             batchTxnParams.to.push(ethData.to);
         }
 
         if (erc20Batch.recipients.length > 0) {
-            const erc20Data = await this.prepareERC20Batch(erc20Batch);
+            const erc20Data = await this.prepareERC20Batch(erc20Batch, allowFailure);
             batchTxnParams.data.push(erc20Data.data);
             batchTxnParams.values.push(erc20Data.value);
             batchTxnParams.to.push(erc20Data.to);
@@ -312,13 +318,14 @@ export class BatchService {
          * Multicall3 contract.
          *
          * @param {ETHBatch} ethBatch - The ETH batch data.
+         * @param {boolean} allowFailure - Whether to allow the transaction to fail.
          * @returns {Promise<{
          *     data: string;
          *     value: bigint;
          *     to: string;
          * }>} A promise that resolves to the prepared batch transaction data.
          */
-    private async prepareETHBatch(ethBatch: ETHBatch): Promise<{
+    private async prepareETHBatch(ethBatch: ETHBatch, allowFailure: boolean): Promise<{
         data: string;
         value: bigint;
         to: string;
@@ -326,7 +333,7 @@ export class BatchService {
         // Build the calls with the correct structure.
         const calls = ethBatch.recipients.map((recipient, index) => ({
             target: recipient,
-            allowFailure: false,
+            allowFailure: allowFailure,
             value: BigInt(ethBatch.amounts[index]),
             callData: "0x",
         }));
@@ -354,13 +361,14 @@ export class BatchService {
          * batch and the address of the Multicall3 contract.
          *
          * @param {ERC20Batch} erc20Batch - The ERC20 batch data.
+         * @param {boolean} allowFailure - Whether to allow the transaction to fail.
          * @returns {Promise<{
          *     data: string;
          *     value: bigint;
          *     to: string;
          * }>} A promise that resolves to the prepared batch transaction data.
     */
-    private async prepareERC20Batch(erc20Batch: ERC20Batch): Promise<{
+    private async prepareERC20Batch(erc20Batch: ERC20Batch, allowFailure: boolean): Promise<{
         data: string;
         value: bigint;
         to: string;
@@ -403,7 +411,7 @@ export class BatchService {
 
                 return {
                     target: token,
-                    allowFailure: false,
+                    allowFailure: allowFailure,
                     value: BigInt(0), // No ETH is sent with ERC20 transfers.
                     callData: encodedCallData,
                 };

@@ -6,7 +6,7 @@
 
 # Interface: TransactionResponse
 
-Defined in: [types/index.ts:54](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L54)
+Defined in: [types/index.ts:54](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L54)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:54](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **invalidTxns**: [`InvalidTransactions`](InvalidTransactions.md)[]
 
-Defined in: [types/index.ts:56](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L56)
+Defined in: [types/index.ts:56](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L56)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:56](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **link**: `string`
 
-Defined in: [types/index.ts:57](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L57)
+Defined in: [types/index.ts:57](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L57)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [types/index.ts:57](https://github.com/akasharora963/evm-batch-sdk/b
 
 > **txn**: `null` \| `TransactionReceipt`
 
-Defined in: [types/index.ts:55](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/types/index.ts#L55)
+Defined in: [types/index.ts:55](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/types/index.ts#L55)

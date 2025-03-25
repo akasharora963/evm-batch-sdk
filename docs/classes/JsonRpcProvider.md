@@ -6,7 +6,7 @@
 
 # Class: JsonRpcProvider
 
-Defined in: [providers/JsonRpcProvider.ts:5](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/JsonRpcProvider.ts#L5)
+Defined in: [providers/JsonRpcProvider.ts:5](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/providers/JsonRpcProvider.ts#L5)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [providers/JsonRpcProvider.ts:5](https://github.com/akasharora963/ev
 
 > **new JsonRpcProvider**(`config`, `rpcUrl`, `privateKey`?): `JsonRpcProvider`
 
-Defined in: [providers/JsonRpcProvider.ts:16](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/JsonRpcProvider.ts#L16)
+Defined in: [providers/JsonRpcProvider.ts:16](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/providers/JsonRpcProvider.ts#L16)
 
 Constructor for JsonRpcProvider.
 
@@ -64,7 +64,7 @@ Error - If the private key is not provided.
 
 > `protected` **config**: [`ChainConfig`](../interfaces/ChainConfig.md)
 
-Defined in: [providers/BaseProvider.ts:5](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BaseProvider.ts#L5)
+Defined in: [providers/BaseProvider.ts:5](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/providers/BaseProvider.ts#L5)
 
 #### Inherited from
 
@@ -76,7 +76,7 @@ Defined in: [providers/BaseProvider.ts:5](https://github.com/akasharora963/evm-b
 
 > `protected` **provider**: `null` \| `Provider`
 
-Defined in: [providers/BaseProvider.ts:6](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BaseProvider.ts#L6)
+Defined in: [providers/BaseProvider.ts:6](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/providers/BaseProvider.ts#L6)
 
 #### Inherited from
 
@@ -88,7 +88,7 @@ Defined in: [providers/BaseProvider.ts:6](https://github.com/akasharora963/evm-b
 
 > `protected` **signer**: `null` \| `Signer`
 
-Defined in: [providers/BaseProvider.ts:7](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/BaseProvider.ts#L7)
+Defined in: [providers/BaseProvider.ts:7](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/providers/BaseProvider.ts#L7)
 
 #### Inherited from
 
@@ -100,7 +100,7 @@ Defined in: [providers/BaseProvider.ts:7](https://github.com/akasharora963/evm-b
 
 > **connect**(): `Promise`\<`void`\>
 
-Defined in: [providers/JsonRpcProvider.ts:37](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/JsonRpcProvider.ts#L37)
+Defined in: [providers/JsonRpcProvider.ts:37](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/providers/JsonRpcProvider.ts#L37)
 
 Connects the provider to the wallet.
 
@@ -120,7 +120,7 @@ Promise that resolves when the provider is connected.
 
 > **getChainId**(): `number`
 
-Defined in: [providers/JsonRpcProvider.ts:72](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/JsonRpcProvider.ts#L72)
+Defined in: [providers/JsonRpcProvider.ts:72](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/providers/JsonRpcProvider.ts#L72)
 
 Returns the chain ID for the target chain.
 
@@ -140,7 +140,7 @@ The chain ID.
 
 > **getProvider**(): `Provider`
 
-Defined in: [providers/JsonRpcProvider.ts:48](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/JsonRpcProvider.ts#L48)
+Defined in: [providers/JsonRpcProvider.ts:48](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/providers/JsonRpcProvider.ts#L48)
 
 Gets the underlying provider for the JsonRpcProvider.
 
@@ -164,7 +164,7 @@ Error - If the provider is not initialized.
 
 > **getSigner**(): `Signer`
 
-Defined in: [providers/JsonRpcProvider.ts:61](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/providers/JsonRpcProvider.ts#L61)
+Defined in: [providers/JsonRpcProvider.ts:61](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/providers/JsonRpcProvider.ts#L61)
 
 Returns the underlying wallet as a signer.
 

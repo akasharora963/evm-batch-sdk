@@ -6,7 +6,7 @@
 
 # Class: BatchService
 
-Defined in: [services/BatchService.ts:19](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/services/BatchService.ts#L19)
+Defined in: [services/BatchService.ts:19](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/services/BatchService.ts#L19)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [services/BatchService.ts:19](https://github.com/akasharora963/evm-b
 
 > **new BatchService**(`config`, `provider`, `multicallConfig`?): `BatchService`
 
-Defined in: [services/BatchService.ts:36](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/services/BatchService.ts#L36)
+Defined in: [services/BatchService.ts:36](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/services/BatchService.ts#L36)
 
 Construct a new BatchService instance.
 
@@ -48,7 +48,7 @@ the configuration for the multicall contract
 
 > **approveToken**(`tokenAddress`, `spender`, `amount`): `Promise`\<`void`\>
 
-Defined in: [services/BatchService.ts:87](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/services/BatchService.ts#L87)
+Defined in: [services/BatchService.ts:87](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/services/BatchService.ts#L87)
 
 Sends a transaction to the ERC20 contract at `tokenAddress` to set the
 allowance for `spender` to `amount` of tokens.
@@ -86,7 +86,7 @@ a Promise that resolves when the transaction is
 
 > **checkTokenAllowance**(`tokenAddress`, `owner`, `spender`, `amount`): `Promise`\<`boolean`\>
 
-Defined in: [services/BatchService.ts:66](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/services/BatchService.ts#L66)
+Defined in: [services/BatchService.ts:66](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/services/BatchService.ts#L66)
 
 Checks if the `owner` has given allowance to `spender` for
 `amount` of tokens with address `tokenAddress`.
@@ -127,9 +127,9 @@ true if the allowance is sufficient, false otherwise
 
 ### estimateGas()
 
-> **estimateGas**(`transactionData`, `gasPrice`): `Promise`\<`bigint`\>
+> **estimateGas**(`transactionData`, `allowFailure`, `gasPrice`): `Promise`\<`bigint`\>
 
-Defined in: [services/BatchService.ts:107](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/services/BatchService.ts#L107)
+Defined in: [services/BatchService.ts:108](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/services/BatchService.ts#L108)
 
 Estimates the gas required for a batch of transactions.
 
@@ -140,6 +140,12 @@ Estimates the gas required for a batch of transactions.
 [`BatchTransactionParams`](../interfaces/BatchTransactionParams.md)
 
 The data for the transactions.
+
+##### allowFailure
+
+`boolean`
+
+Whether to allow failures in the transactions.
 
 ##### gasPrice
 
@@ -157,9 +163,9 @@ A promise that resolves to the estimated gas limit for the transactions.
 
 ### processBatchTransactions()
 
-> **processBatchTransactions**(`batchData`, `gasPrice`): `Promise`\<`null` \| [`TransactionResponse`](../interfaces/TransactionResponse.md)\>
+> **processBatchTransactions**(`batchData`, `allowFailure`, `gasPrice`): `Promise`\<`null` \| [`TransactionResponse`](../interfaces/TransactionResponse.md)\>
 
-Defined in: [services/BatchService.ts:178](https://github.com/akasharora963/evm-batch-sdk/blob/e2e0d9ea30afe6387364eecee42bd8aa7b7d0e09/src/services/BatchService.ts#L178)
+Defined in: [services/BatchService.ts:181](https://github.com/akasharora963/evm-batch-sdk/blob/194b75512cde76014240141cae8ca29b3a424770/src/services/BatchService.ts#L181)
 
 Sends a batch of transactions to the Ethereum network and returns the
 result of the transaction. The batch is processed as a single transaction
@@ -173,6 +179,12 @@ a link to the Etherscan page for the transaction.
 [`BatchData`](../interfaces/BatchData.md)[]
 
 Array of batch data objects.
+
+##### allowFailure
+
+`boolean`
+
+Whether to allow the transaction to fail.
 
 ##### gasPrice
 
