@@ -61,18 +61,30 @@ The SDK provides functionality to process multiple transactions in a single batc
     );
 
 ```
+
 3. Prepare a batch of transactions, specifying recipients and amounts.
 4. Execute the batch transaction process.
 5. Retrieve transaction details, including the transaction hash and any invalid transactions.
 
 ## Running the Script
-After setting up, execute the script to process batch transactions.
+After setting up, execute the script to process batch transactions.For example : Refer src/example
 
 ## Expected Output
 Upon successful execution, the script will provide:
 - **Transaction Hash** to track the transaction on the blockchain.
 - **Invalid Transactions**, if any issues occur.
 - **Explorer Link** for quick access to transaction details.
+
+### Major Types
+
+###  BATCH DATA
+```ts
+export interface BatchData {
+    recipient: string;
+    amount: string;
+    tokenAddress?: string; // only include in case of erc20
+}
+```
 
 ## Troubleshooting
 If issues arise, consider the following:
