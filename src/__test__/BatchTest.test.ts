@@ -160,7 +160,7 @@ describe('BatchService', () => {
                 to: [TESTNET_MULTICALL_CONFIG.multicall3Address]
             };
 
-            const result = await service.estimateGas(transactionData, BigInt(30));
+            const result = await service.estimateGas(transactionData, false, BigInt(30));
 
             expect(result).toBe(BigInt(DEFAULT_GAS_LIMIT));
         });
@@ -178,7 +178,7 @@ describe('BatchService', () => {
                 estimateGas: mockEstimateGas
             }));
 
-            const result = await service.processBatchTransactions(batchData, ethers.toBigInt(30));
+            const result = await service.processBatchTransactions(batchData, false, ethers.toBigInt(30));
 
             expect(result?.txn).toBeDefined();
             expect(result?.invalidTxns).toHaveLength(0);
@@ -197,7 +197,7 @@ describe('BatchService', () => {
                 estimateGas: mockEstimateGas
             }));
 
-            const result = await service.processBatchTransactions(batchData, ethers.toBigInt(30));
+            const result = await service.processBatchTransactions(batchData, false, ethers.toBigInt(30));
 
             expect(result?.txn).toBeDefined();
             expect(result?.invalidTxns).toHaveLength(0);

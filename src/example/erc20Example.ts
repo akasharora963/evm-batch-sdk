@@ -45,7 +45,7 @@ async function main() {
 
 
     try {
-        const result = await batchService.processBatchTransactions(batchData, BigInt(1e9));
+        const result = await batchService.processBatchTransactions(batchData, false, BigInt(1e9));
         if (result) {
             console.log('Transaction hash:', (await result.txn?.getTransaction())?.hash);
             console.log('Invalid transactions:', result.invalidTxns);

@@ -73,9 +73,6 @@ export class GasPriceUtils {
         const gasPrice = await this.estimateGasPrice(provider, config, multicallConfig);
         const feeData = await provider.getFeeData();
 
-        console.log("Gas Price:", gasPrice);
-        console.log("Max Fee Per Gas:", feeData.maxFeePerGas);
-
         if (feeData.maxFeePerGas && feeData.maxFeePerGas > gasPrice) {
             return feeData.maxFeePerGas;
         }
