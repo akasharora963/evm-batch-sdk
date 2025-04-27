@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akasharora963/evm-batch-sdk.git"
+  },
   "scripts": {
     "build": "tsc",
     "example:eth": "ts-node src/example/ethExample.ts",
